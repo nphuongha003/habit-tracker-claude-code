@@ -13,17 +13,24 @@ const COLOR_OPTIONS = [
   { color: 'bg-purple-500', bgColor: 'bg-purple-50', textColor: 'text-purple-500' },
 ]
 
-export default function AddHabitModal({ onAdd, onClose }) {
+const SUGGESTED_CATEGORIES = [
+  'Health & Fitness', 'Learning', 'Mindfulness', 'Sleep', 'Productivity', 'Social', 'Finance',
+]
+
+export default function AddHabitModal({ onAdd, onClose, existingCategories = [] }) {
   const [name, setName] = useState('')
+  const [category, setCategory] = useState('')
   const [selectedColor, setSelectedColor] = useState(0)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
-    onAdd({ name: trimmed, ...COLOR_OPTIONS[selectedColor] })
+    onAdd({ name: trimmed, category: category.trim() || 'General', ...COLOR_OPTIONS[selectedColor] })
     onClose()
   }
+
+  const suggestions = [...new Set([...existingCategories, ...SUGGESTED_CATEGORIES])]
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 animate-overlay-in">
@@ -52,6 +59,22 @@ export default function AddHabitModal({ onAdd, onClose }) {
               placeholder="e.g. Morning run"
               className="w-full text-sm text-[var(--tx)] border border-[var(--bd)] rounded-lg px-3 py-2 outline-none focus:border-[#2383e2] focus:ring-2 focus:ring-[#2383e2]/20 transition-all bg-[var(--bg)] placeholder:text-[var(--txm)]"
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="text-xs font-medium text-[var(--tx2)] block mb-1.5">
+              Category <span className="text-[var(--txm)] font-normal">(optional)</span>
+            </label>
+            <input
+              list="category-suggestions"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="e.g. Health & Fitness"
+              className="w-full text-sm text-[var(--tx)] border border-[var(--bd)] rounded-lg px-3 py-2 outline-none focus:border-[#2383e2] focus:ring-2 focus:ring-[#2383e2]/20 transition-all bg-[var(--bg)] placeholder:text-[var(--txm)]"
+            />
+            <datalist id="category-suggestions">
+              {suggestions.map((s) => <option key={s} value={s} />)}
+            </datalist>
           </div>
 
           <div className="mb-5">

@@ -28,6 +28,7 @@ export default function HabitRow({ habit, onToggleToday, onEdit, onDelete, isNew
 
   return (
     <div
+      id={`habit-${habit.id}`}
       className={cn(
         'group flex items-center gap-3 px-4 py-3 transition-colors border border-transparent',
         'hover:bg-[var(--bg2)] hover:border-[var(--bd)]',
@@ -35,12 +36,10 @@ export default function HabitRow({ habit, onToggleToday, onEdit, onDelete, isNew
         isDeleting && 'animate-habit-exit'
       )}
     >
-      {/* Icon */}
       <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', bgColor)}>
         <Icon className={cn('w-4 h-4', textColor)} />
       </div>
 
-      {/* Name & category */}
       <div className="flex-1 min-w-0">
         {editing ? (
           <div className="flex items-center gap-1.5">
@@ -69,7 +68,6 @@ export default function HabitRow({ habit, onToggleToday, onEdit, onDelete, isNew
         )}
       </div>
 
-      {/* Week grid */}
       <div className="hidden sm:flex items-center gap-1">
         {weekDays.map((_, i) => {
           const done = completedDays.includes(i)
@@ -87,10 +85,8 @@ export default function HabitRow({ habit, onToggleToday, onEdit, onDelete, isNew
         })}
       </div>
 
-      {/* Today's checkbox */}
       <HabitCheckbox checked={doneToday} color={color} onClick={onToggleToday} />
 
-      {/* Per-habit stats */}
       <div className="hidden md:flex items-center gap-3 shrink-0">
         <div className="flex items-center gap-0.5" title="Current streak">
           <Flame
@@ -111,7 +107,6 @@ export default function HabitRow({ habit, onToggleToday, onEdit, onDelete, isNew
         </div>
       </div>
 
-      {/* Actions */}
       {!editing && (
         <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
           <button

@@ -1,21 +1,32 @@
 import { cn } from '@/lib/utils'
 
-const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun']
+// w-3 (12px) + gap-0.5 (2px) = 14px per week column
+const CELL_W = 14
 
-function generateHeatmapData() {
-  const weeks = []
-  for (let w = 0; w < 26; w++) {
-    const week = []
-    for (let d = 0; d < 7; d++) {
-      const r = Math.random()
-      week.push(r > 0.35 ? (r > 0.7 ? (r > 0.88 ? 4 : 3) : 2) : r > 0.15 ? 1 : 0)
-    }
-    weeks.push(week)
-  }
-  return weeks
+function computeStartDate() {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const start = new Date(today)
+  start.setDate(today.getDate() - 26 * 7 + 1)
+  const dow = start.getDay()
+  start.setDate(start.getDate() - (dow === 0 ? 6 : dow - 1))
+  return start
 }
 
-const heatmapData = generateHeatmapData()
+function buildMonthLabels(startDate, numWeeks = 26) {
+  const labels = []
+  const cur = new Date(startDate)
+  let lastMonth = -1
+  for (let w = 0; w < numWeeks; w++) {
+    const m = cur.getMonth()
+    if (m !== lastMonth) {
+      labels.push({ text: cur.toLocaleString('en-US', { month: 'short' }), week: w })
+      lastMonth = m
+    }
+    cur.setDate(cur.getDate() + 7)
+  }
+  return labels
+}
 
 const levelColors = [
   'bg-[var(--dv)]',
@@ -25,7 +36,11 @@ const levelColors = [
   'bg-violet-700 dark:bg-violet-500',
 ]
 
-export default function HeatmapBlock() {
+export default function HeatmapBlock({ data }) {
+  const startDate = computeStartDate()
+  const monthLabels = buildMonthLabels(startDate)
+  const heatmapData = data ?? []
+
   return (
     <div className="bg-[var(--bg)] rounded-xl border border-[var(--bd)] p-5">
       <div className="flex items-center justify-between mb-4 gap-4">
@@ -59,12 +74,15 @@ export default function HeatmapBlock() {
             </div>
           ))}
         </div>
-        <div className="flex gap-0.5 mt-1.5">
-          {months.map((m) => (
-            <div key={m} className="w-[54px] shrink-0">
-              <span className="text-[10px] text-[var(--tx2)]">{m}</span>
-            </div>
-          ))}
+        <div className="flex mt-1.5">
+          {monthLabels.map((label, i) => {
+            const nextWeek = monthLabels[i + 1]?.week ?? 26
+            return (
+              <div key={i} style={{ width: `${(nextWeek - label.week) * CELL_W}px` }} className="shrink-0">
+                <span className="text-[10px] text-[var(--tx2)]">{label.text}</span>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

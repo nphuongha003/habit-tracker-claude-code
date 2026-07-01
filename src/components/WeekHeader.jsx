@@ -1,7 +1,7 @@
 function getCurrentWeek() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const dow = today.getDay() // 0=Sun
+  const dow = today.getDay()
   const monday = new Date(today)
   monday.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1))
 
@@ -13,9 +13,8 @@ function getCurrentWeek() {
   })
 }
 
-const days = getCurrentWeek()
-
 export default function WeekHeader() {
+  const days = getCurrentWeek()
   return (
     <div className="flex items-center gap-3 px-4 py-2 border-b border-[var(--dv)]">
       <div className="flex-1" />
